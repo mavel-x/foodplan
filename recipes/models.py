@@ -1,8 +1,9 @@
 from django.db import models
+from django.db.models import F, Sum, Value
 
 
 class Ingredient(models.Model):
-    class AllergenGroup(models.IntegerChoices):
+    class AllergyGroup(models.IntegerChoices):
         SEA = 1, 'Рыба и морепродукты'
         MEAT = 2, 'Мясо'
         CEREAL = 3, 'Зерновые'
@@ -16,15 +17,73 @@ class Ingredient(models.Model):
         max_length=200,
         unique=True,
     )
-    allergen_group = models.IntegerField(
+    allergy_group = models.IntegerField(
         'аллергическая группа',
-        choices=AllergenGroup.choices,
+        choices=AllergyGroup.choices,
         blank=True,
         null=True,
     )
     calories = models.IntegerField(
         'Ккал на 100 г',
     )
+    liquid = models.BooleanField(
+        'жидкий',
+        default=False,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Amount(models.Model):
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        verbose_name='ингредиент',
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        verbose_name='рецепт',
+        related_name='amounts'
+    )
+    grams = models.IntegerField(
+        'количество, г/мл'
+    )
+
+    def __str__(self):
+        return f'{self.ingredient} {self.grams}'
+
+
+class RecipeQuerySet(models.QuerySet):
+    def with_calories(self):
+        return self.annotate(
+            calories=Sum(F('amounts__grams') * F('amounts__ingredient__calories') / Value(100)))
+
+
+class Recipe(models.Model):
+    class MealType(models.IntegerChoices):
+        BREAKFAST = 1, 'завтрак'
+        MAIN = 2, 'обед/ужин'
+        DESSERT = 3, 'десерт'
+
+    name = models.CharField(
+        'название',
+        max_length=200,
+        unique=True,
+    )
+    ingredients = models.ManyToManyField(
+        'Ingredient',
+        through='Amount',
+        verbose_name='ингредиенты',
+        related_name='recipes',
+    )
+    type = models.IntegerField(
+        'тип',
+        choices=MealType.choices
+    )
+
+    objects = RecipeQuerySet.as_manager()
 
     def __str__(self):
         return self.name
