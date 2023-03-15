@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from members.forms import CreateUserForm
 
 
@@ -14,6 +14,7 @@ def register_user(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('login')
 
     context = {'form': form}
     return render(request, 'register.html', context)
