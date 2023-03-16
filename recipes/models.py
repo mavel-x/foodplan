@@ -2,15 +2,17 @@ from django.db import models
 from django.db.models import F, Sum, Value
 
 
+class AllergyGroup(models.IntegerChoices):
+    SEA = 1, 'Рыба и морепродукты'
+    MEAT = 2, 'Мясо'
+    CEREAL = 3, 'Зерновые'
+    BEES = 4, 'Продукты пчеловодства'
+    NUTS_BEANS = 5, 'Орехи и бобовые'
+    DAIRY = 6, 'Молочные продукты'
+    __empty__ = ''
+
+
 class Ingredient(models.Model):
-    class AllergyGroup(models.IntegerChoices):
-        SEA = 1, 'Рыба и морепродукты'
-        MEAT = 2, 'Мясо'
-        CEREAL = 3, 'Зерновые'
-        BEES = 4, 'Продукты пчеловодства'
-        NUTS_BEANS = 5, 'Орехи и бобовые'
-        DAIRY = 6, 'Молочные продукты'
-        __empty__ = ''
 
     name = models.CharField(
         'название',
@@ -60,7 +62,7 @@ class RecipeQuerySet(models.QuerySet):
         return self.annotate(
             calories=Sum(F('amounts__grams') * F('amounts__ingredient__calories') / Value(100)))
 
-    def exclude_allergies(self, *allergies: Ingredient.AllergyGroup):
+    def exclude_allergies(self, *allergies: AllergyGroup):
         return self.exclude(ingredients__allergy_group__in=allergies)
 
 
