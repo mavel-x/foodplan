@@ -101,8 +101,15 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-    def calories(self):
+    def calories_individual(self):
         total = 0
         for amount in self.amounts.all():
             total += round(amount.grams * amount.ingredient.calories / 100)
         return total
+
+    def allergies(self):
+        allergies = set()
+        for ingredient in self.ingredients.all():
+            if ingredient.allergy_group:
+                allergies.add(ingredient.get_allergy_group_display())
+        return list(allergies)

@@ -20,6 +20,7 @@ class AmountInline(admin.TabularInline):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [AmountInline]
+    list_filter = ['type']
 
     def get_queryset(self, request):
         return super().get_queryset(request).with_calories()
@@ -27,7 +28,4 @@ class RecipeAdmin(admin.ModelAdmin):
     def calories(self, obj):
         return obj.calories
 
-    list_display = ['name', 'type', 'calories']
-
-
-
+    list_display = ['name', 'type', 'calories', 'allergies']
