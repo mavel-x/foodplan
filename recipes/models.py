@@ -82,8 +82,27 @@ class Recipe(models.Model):
         'тип',
         choices=MealType.choices
     )
+    description = models.TextField(
+        'описание',
+        blank=True,
+    )
+    instructions = models.TextField(
+        'инструкция по приготовлению',
+        blank=True,
+    )
+    image = models.ImageField(
+        'картинка',
+        null=True,
+        blank=True,
+    )
 
     objects = RecipeQuerySet.as_manager()
 
     def __str__(self):
         return self.name
+
+    def calories(self):
+        total = 0
+        for amount in self.amounts.all():
+            total += round(amount.grams * amount.ingredient.calories / 100)
+        return total

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>План питания на неделю, меню, рецепты, список покупок. Классическое меню, безуглеводное меню</title>
 </head>
 <body>
@@ -15,7 +17,7 @@
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
             </div>
@@ -27,19 +29,43 @@
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
-                            <img src="img/circle1.png" alt="">
+                            {% if recipe.image %}
+                              <img src="{{ recipe.image.url }}" alt="">
+                            {% else %}
+                              <img src="{% static 'img/circle1.png' %}" alt="">
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
-                        <h2>Название рецепта</h2>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                        </ul>
-                        <h6>Общая калорийность: 1000 ккал</h6>
+                    <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
+                        <div class="row">
+                            <h2>{{ recipe.name }}</h2>
+                            <div class="col-12 col-sm-6 d-flex flex-column justify-content-between">
+                              {% if recipe.description %}
+                                <h6>{{ recipe.description|linebreaks }}</h6>
+                              {% endif %}
+                              {% if recipe.instructions %}
+                                <h6>{{ recipe.instructions|linebreaks }}</h6>
+                              {% endif %}
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <small class="link-secondary">Ингредиенты:</small>
+                                <ul class="list-group list-group-flush">
+                                  {% for amount in amounts %}
+                                    <li class="list-group-item disabled"><small>
+                                      {{ amount.ingredient.name }} (
+                                        {{ amount.grams }}
+                                        {% if amount.ingredient.liquid %}
+                                          мл
+                                        {% else %}
+                                          г
+                                        {% endif %}
+                                      )
+                                    </small></li>
+                                  {% endfor %}
+                                </ul>
+                                <small class="link-secondary">Калорийность: {{ recipe.calories }} Ккал</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,11 +75,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="img/vk.png" height="38" width="auto" alt="">
+                        <img src="{% static 'img/vk.png' %}" height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>
