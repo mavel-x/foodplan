@@ -36,3 +36,8 @@ def register_user(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+def profile(request):
+    context = {}
+    return render(request, 'profile.html', context)
