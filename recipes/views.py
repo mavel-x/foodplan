@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from .models import Recipe
+from .models import Recipe, AllergyGroup
 
 
 def recipe_card(request, recipe_id):
@@ -11,3 +11,25 @@ def recipe_card(request, recipe_id):
         'amounts': amounts,
     }
     return render(request, 'card.html', context)
+
+
+def daily_menu(request):
+    # TODO
+    # subscription = get_object_or_404(Subscription, pk=subscription_id)
+
+    subscription_allergies = [AllergyGroup.CEREAL]
+    subscription_meals = [Recipe.MealType.MAIN, Recipe.MealType.BREAKFAST, Recipe.MealType.DESSERT]
+
+    allowed_recipes = (
+        Recipe.objects
+        .with_calories()
+        .exclude_allergies(*subscription_allergies)
+        .prefetch_related('amounts', 'ingredients')
+    )
+    recipes = []
+    for meal in sorted(subscription_meals):
+        recipes.append(
+            allowed_recipes.filter(type=meal).order_by('?').first()
+        )
+    context = {'recipes': recipes}
+    return render(request, 'daily_menu.html', context)
