@@ -17,11 +17,12 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
-from django.shortcuts import render
+
+from .views import index
 
 
 urlpatterns = [
-    path('', render, kwargs={'template_name': 'index.html'}, name='home'),
+    path('', index, name='home'),
     path('admin/', admin.site.urls),
     path('recipes/', include('recipes.urls')),
     path('profile/', include('members.urls')),
