@@ -60,6 +60,9 @@ class RecipeQuerySet(models.QuerySet):
         return self.annotate(
             calories=Sum(F('amounts__grams') * F('amounts__ingredient__calories') / Value(100)))
 
+    def exclude_allergies(self, *allergies: Ingredient.AllergyGroup):
+        return self.exclude(ingredients__allergy_group__in=allergies)
+
 
 class Recipe(models.Model):
     class MealType(models.IntegerChoices):
