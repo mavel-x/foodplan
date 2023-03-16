@@ -1,5 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from members.models import CustomUser
 
 
 class CreateUserForm(UserCreationForm):
@@ -12,5 +13,6 @@ class CreateUserForm(UserCreationForm):
         self.fields["password2"].widget.attrs["class"] = "form-control"
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'email', 'password1', 'password2']
+   
