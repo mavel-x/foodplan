@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Amount
+from .models import Ingredient, Recipe, Amount, WeeklyMenu, DailyMenu, WeekDayMenu
 
 
 @admin.register(Ingredient)
@@ -29,3 +29,17 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.calories
 
     list_display = ['name', 'type', 'calories', 'allergies']
+
+
+@admin.register(DailyMenu)
+class DailyMenuAdmin(admin.ModelAdmin):
+    pass
+
+
+class WeekDayMenuInline(admin.TabularInline):
+    model = WeekDayMenu
+
+
+@admin.register(WeeklyMenu)
+class WeeklyMenuAdmin(admin.ModelAdmin):
+    inlines = [WeekDayMenuInline]

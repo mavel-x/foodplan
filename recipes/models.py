@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import F, Sum, Value
+from sortedm2m.fields import SortedManyToManyField
 
 
 class AllergyGroup(models.IntegerChoices):
@@ -118,3 +119,62 @@ class Recipe(models.Model):
             if ingredient.allergy_group:
                 allergies.add(ingredient.get_allergy_group_display())
         return list(allergies)
+
+
+class Weekday(models.IntegerChoices):
+    MON = 1, 'Пн'
+    TUE = 2, 'Вт'
+    WED = 3, 'Ср'
+    THU = 4, 'Чт'
+    FRI = 5, 'Пт'
+    SAT = 6, 'Сб'
+    SUN = 7, 'Вс'
+
+
+class DailyMenu(models.Model):
+    meals = SortedManyToManyField(
+        'Recipe',
+    )
+
+    def __str__(self):
+        return ', '.join([meal.name for meal in self.meals.all()])
+
+
+class WeekDayMenu(models.Model):
+    day_menu = models.ForeignKey(
+        'DailyMenu',
+        on_delete=models.CASCADE,
+        verbose_name='дневное меню',
+        related_name='week_day_menus',
+    )
+    week = models.ForeignKey(
+        'WeeklyMenu',
+        on_delete=models.CASCADE,
+        verbose_name='недельное меню',
+        related_name='week_menus',
+    )
+    weekday = models.SmallIntegerField(
+        'день недели',
+        choices=Weekday.choices,
+    )
+
+
+class WeeklyMenu(models.Model):
+    user = models.IntegerField(
+        verbose_name='пользователь'
+    )
+    year = models.SmallIntegerField(
+        'год'
+    )
+    week = models.SmallIntegerField(
+        'ISO номер недели',
+    )
+    daily_menus = models.ManyToManyField(
+        'DailyMenu',
+        verbose_name='дневные меню',
+        through='WeekDayMenu',
+    )
+
+    def __str__(self):
+        return f'{self.user} {self.year} {self.week}'
+
