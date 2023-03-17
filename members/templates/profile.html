@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href={% static "style.css" %}>
     <title>Foodplan 2021 - Меню на неделю FOODPLAN</title>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                <a class="navbar-brand" href='{% url 'home' %}'>
+                    <img src={% static 'img/logo.8d8f24edbb5f.svg' %} height="55" width="189" alt="">
                 </a>
-                <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
+                <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'logout' %}'">Выйти</button>
             </div>
         </nav>
     </header>
@@ -34,11 +34,11 @@
                     
                     <div class="card col-12 col-md-2 p-3 mb-3 d-flex flex-column align-items-center foodplan__shadow">
                         <div class="position-relative">
-                            <img src="img/test_avatar.png" alt="" width="100" height="100" class="rounded-pill">
+                            <img src={% static "img/test_avatar.png" %} alt="" width="100" height="100" class="rounded-pill">
                             <span class="badge rounded-circle position-absolute bottom-0 end-0 foodplan__bg_green avatar__plus"><a href="#"
                                     class="link-dark text-decoration-none align-middle">+</a></span>
                         </div>
-                        <h3 class="card-title text-center">Tim</h3>
+                        <h3 class="card-title text-center">{{request.user.username}}</h3>
                         <div class="d-block">
                             <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
                         </div>
@@ -56,41 +56,53 @@
                             </ul>
                             <div class="tab-content mt-2">
                                 <div class="tab-pane fade show active" id="data">
-                                    <form action="">
+                                    <form method="post" action="">
+                                        {% csrf_token %}
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label for="exampleInputEmail1" class="form-label">Имя</label>
                                                 <small><a href="#" class="link-dark foodplan_green">изменить</a></small>
                                             </div>
-                                        
-                                            <input type="text" class="form-control" id="name">
+                                            <input type="text" class="form-control" name="username" id="id_username" value="{{ user.username }}">
+                                            
                                         </div>
                                         <div class="mb-3">
                                             <label for="exampleInputEmail1" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                                            <input type="email" class="form-control" name="email" id="id_email" aria-describedby="emailHelp" disabled value="{{ user.email }}">
                                         </div>
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label for="exampleInputPassword1" class="form-label">Пароль</label>
-                                                <small><a href="#" class="link-dark foodplan_green">изменить</a></small>
+                                                <small><a href="#" class="link-dark foodplan_green" >изменить</a></small>
                                             </div>
                                         
-                                            <input type="password" class="form-control" id="password">
+                                            <input type="password" class="form-control" id="password1" name="password1">
                                         </div>
                                         <div class="mb-3">
                                             <label for="exampleInputPassword1" class="form-label">Подтверждение пароля</label>
-                                            <input type="password" class="form-control" id="PasswordConfirm">
+                                            <input type="password" class="form-control" id="password2" name="password2">
                                         </div>
                                         <div class="d-block">
                                             <button type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Сохранить
                                                 изменения</button>
                                         </div>
                                     </form>
+                                    {% for field, error in form.errors.items %}
+                                    <div class="alert alert-danger my-3 p-1" role="alert">
+                                        {{ error|striptags }}
+                                    </div>
+                                    {% endfor %}
+
+                                    {% for message in messages %}
+                                    <div class="alert alert-success my-3 p-1" role="alert">
+                                        {{ message }}
+                                    </div>
+                                    {% endfor %}
                                 </div>
                                 <div class="tab-pane fade" id="menu">
                                     <div class="row">
                                         <div class="col-2">
-                                            <img src="img/circle1.png" alt="" class="w-100">
+                                            <img src={% static "img/circle1.png" %} alt="" class="w-100">
                                         </div>
                                         <div class="col-10 col-md-10">
                                             <div class="row">
@@ -135,11 +147,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src={% static "img/logo.8d8f24edbb5f.svg" %} height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="img/vk.png" height="38" width="auto" alt="">
+                        <img src={% static "img/vk.png" %} height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>
