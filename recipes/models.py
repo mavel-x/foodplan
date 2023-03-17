@@ -1,4 +1,6 @@
-from django.db import models
+from datetime import date
+
+from django.db import models, transaction
 from django.db.models import F, Sum, Value
 from sortedm2m.fields import SortedManyToManyField
 
@@ -160,8 +162,8 @@ class WeekDayMenu(models.Model):
 
 
 class WeeklyMenu(models.Model):
-    user = models.IntegerField(
-        verbose_name='пользователь'
+    subscription = models.IntegerField(
+        verbose_name='подписка'
     )
     year = models.SmallIntegerField(
         'год'
@@ -176,5 +178,51 @@ class WeeklyMenu(models.Model):
     )
 
     def __str__(self):
-        return f'{self.user} {self.year} {self.week}'
+        return f'{self.subscription} {self.year} {self.week}'
 
+    @classmethod
+    @transaction.atomic
+    def build_random(cls, subscription_id, year, week):
+        user_subscription = 666
+        user_meals = [Recipe.MealType.MAIN, Recipe.MealType.MAIN, Recipe.MealType.BREAKFAST, Recipe.MealType.DESSERT]
+        user_allergies = [AllergyGroup.BEES]
+
+        allowed_recipes = (
+            Recipe.objects
+            .exclude_allergies(*user_allergies)
+        )
+        weekly_menu = cls.objects.create(
+            subscription=user_subscription,
+            year=year,
+            week=week,
+        )
+        for day in Weekday:
+            recipes = []
+            for meal in sorted(user_meals):
+                recipes.append(
+                    allowed_recipes
+                    .filter(type=meal)
+                    .exclude(id__in=[recipe.id for recipe in recipes])
+                    .order_by('?')
+                    .first()
+                )
+            daily_menu = DailyMenu.objects.create()
+            daily_menu.meals.add(*recipes)
+            weekly_menu.daily_menus.add(
+                daily_menu,
+                through_defaults={
+                    'weekday': day,
+                }
+            )
+        return weekly_menu
+
+    @classmethod
+    def get_or_build_for_current_week(cls, subscription_id):
+        today = date.today().isocalendar()
+        try:
+            return cls.objects.get(
+                subscription=subscription_id,
+                year=today.year,
+                week=today.week)
+        except cls.DoesNotExist:
+            return cls.build_random(subscription_id, today.year, today.week)
