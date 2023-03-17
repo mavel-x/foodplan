@@ -17,8 +17,8 @@ def daily_menu(request):
     # TODO
     # subscription = get_object_or_404(Subscription, pk=subscription_id)
 
-    subscription_allergies = [AllergyGroup.CEREAL]
-    subscription_meals = [Recipe.MealType.MAIN, Recipe.MealType.BREAKFAST, Recipe.MealType.DESSERT]
+    subscription_allergies = [AllergyGroup.BEES]
+    subscription_meals = [Recipe.MealType.MAIN, Recipe.MealType.MAIN, Recipe.MealType.BREAKFAST, Recipe.MealType.DESSERT]
 
     allowed_recipes = (
         Recipe.objects
@@ -29,7 +29,11 @@ def daily_menu(request):
     recipes = []
     for meal in sorted(subscription_meals):
         recipes.append(
-            allowed_recipes.filter(type=meal).order_by('?').first()
+            allowed_recipes
+            .filter(type=meal)
+            .exclude(id__in=[recipe.id for recipe in recipes])
+            .order_by('?')
+            .first()
         )
     context = {'recipes': recipes}
     return render(request, 'daily_menu.html', context)
