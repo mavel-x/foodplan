@@ -28,10 +28,11 @@ class ChangeUserForm(UserChangeForm):
         super().clean()
         password1 = self.cleaned_data['password1']
         password2 = self.cleaned_data['password2']
-        if password1 and password2 and password1 != password2:
-            errors = {'password2': ValidationError('The two password fields didn\’t match.', code='password_mismatch')}
-            raise ValidationError(errors)
-        password_validation.validate_password(password1, self.instance)
+        if password1 and password2:
+            if password1 != password2:
+                errors = {'password2': ValidationError('The two password fields didn\’t match.', code='password_mismatch')}
+                raise ValidationError(errors)
+            password_validation.validate_password(password1, self.instance)
 
     class Meta:
         model = get_user_model()
