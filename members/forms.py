@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from members.models import CustomUser
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 from django import forms
 
@@ -31,6 +31,7 @@ class ChangeUserForm(UserChangeForm):
         if password1 and password2 and password1 != password2:
             errors = {'password2': ValidationError('The two password fields didn\’t match.', code='password_mismatch')}
             raise ValidationError(errors)
+        password_validation.validate_password(password1, self.instance)
 
     class Meta:
         model = get_user_model()
