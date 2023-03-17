@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href={% static "style.css"%}>
+    <link rel="stylesheet" href={% static "style.css" %}>
     <title>Foodplan 2021 - Меню на неделю FOODPLAN</title>
 </head>
 <body>
@@ -38,7 +38,7 @@
                             <span class="badge rounded-circle position-absolute bottom-0 end-0 foodplan__bg_green avatar__plus"><a href="#"
                                     class="link-dark text-decoration-none align-middle">+</a></span>
                         </div>
-                        <h3 class="card-title text-center">Tim</h3>
+                        <h3 class="card-title text-center">{{request.user.username}}</h3>
                         <div class="d-block">
                             <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
                         </div>
@@ -63,11 +63,11 @@
                                                 <small><a href="#" class="link-dark foodplan_green">изменить</a></small>
                                             </div>
                                         
-                                            <input type="text" class="form-control" id="name">
+                                            <input type="text" class="form-control" id="name" value={{request.user.username}}>
                                         </div>
                                         <div class="mb-3">
                                             <label for="exampleInputEmail1" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" value={{request.user.email}}>
                                         </div>
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
@@ -135,7 +135,7 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src={% static "img/logo.8d8f24edbb5f.svg" %}height="55" width="189" alt="">
+                    <img src={% static "img/logo.8d8f24edbb5f.svg" %} height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
