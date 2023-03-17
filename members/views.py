@@ -27,8 +27,10 @@ def register_user(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            login(request, user)
+            update_session_auth_hash(request, user)
+            return redirect('profile')
 
     context = {'form': form}
     return render(request, 'register.html', context)
