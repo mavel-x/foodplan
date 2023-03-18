@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Amount, WeeklyMenu, DailyMenu, WeekDayMenu
+from .models import Ingredient, Recipe, Amount, WeeklyMenu, DailyMenu, WeekDayMenu, MealType, Allergy
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ['name', 'calories', 'liquid', 'allergy_group']
+    list_display = ['name', 'calories', 'liquid', 'allergy_type']
 
 
 class AmountInline(admin.TabularInline):
@@ -20,7 +20,7 @@ class AmountInline(admin.TabularInline):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [AmountInline]
-    list_filter = ['type']
+    list_filter = ['category']
 
     def get_queryset(self, request):
         return super().get_queryset(request).with_calories()
@@ -28,7 +28,7 @@ class RecipeAdmin(admin.ModelAdmin):
     def calories(self, obj):
         return obj.calories
 
-    list_display = ['name', 'type', 'calories', 'allergies']
+    list_display = ['name', 'category', 'calories']
 
 
 @admin.register(DailyMenu)
@@ -43,3 +43,13 @@ class WeekDayMenuInline(admin.TabularInline):
 @admin.register(WeeklyMenu)
 class WeeklyMenuAdmin(admin.ModelAdmin):
     inlines = [WeekDayMenuInline]
+
+
+@admin.register(Allergy)
+class AllergyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(MealType)
+class MealTypeAdmin(admin.ModelAdmin):
+    pass

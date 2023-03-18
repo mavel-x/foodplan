@@ -15,16 +15,42 @@ class AllergyGroup(models.IntegerChoices):
     __empty__ = ''
 
 
-class Ingredient(models.Model):
+class Allergy(models.Model):
+    category = models.SmallIntegerField(
+        'аллергическая группа',
+        choices=AllergyGroup.choices,
+    )
 
+    def __str__(self):
+        return self.get_category_display()
+
+
+class MealGroup(models.IntegerChoices):
+    BREAKFAST = 1, 'завтрак'
+    MAIN = 2, 'обед/ужин'
+    DESSERT = 3, 'десерт'
+
+
+class MealType(models.Model):
+    category = models.SmallIntegerField(
+        'категория',
+        choices=MealGroup.choices
+    )
+
+    def __str__(self):
+        return self.get_category_display()
+
+
+class Ingredient(models.Model):
     name = models.CharField(
         'название',
         max_length=200,
         unique=True,
     )
-    allergy_group = models.IntegerField(
-        'аллергическая группа',
-        choices=AllergyGroup.choices,
+    allergy_type = models.ForeignKey(
+        'Allergy',
+        verbose_name='аллергическая группа',
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
@@ -70,11 +96,6 @@ class RecipeQuerySet(models.QuerySet):
 
 
 class Recipe(models.Model):
-    class MealType(models.IntegerChoices):
-        BREAKFAST = 1, 'завтрак'
-        MAIN = 2, 'обед/ужин'
-        DESSERT = 3, 'десерт'
-
     name = models.CharField(
         'название',
         max_length=200,
@@ -86,9 +107,11 @@ class Recipe(models.Model):
         verbose_name='ингредиенты',
         related_name='recipes',
     )
-    type = models.IntegerField(
-        'тип',
-        choices=MealType.choices
+    category = models.ForeignKey(
+        'MealType',
+        verbose_name='категория',
+        on_delete=models.CASCADE,
+        null=True,
     )
     description = models.TextField(
         'описание',
@@ -114,13 +137,6 @@ class Recipe(models.Model):
         for amount in self.amounts.all():
             total += round(amount.grams * amount.ingredient.calories / 100)
         return total
-
-    def allergies(self):
-        allergies = set()
-        for ingredient in self.ingredients.all():
-            if ingredient.allergy_group:
-                allergies.add(ingredient.get_allergy_group_display())
-        return list(allergies)
 
 
 class Weekday(models.IntegerChoices):
@@ -184,7 +200,7 @@ class WeeklyMenu(models.Model):
     @transaction.atomic
     def build_random(cls, subscription_id, year, week):
         user_subscription = 666
-        user_meals = [Recipe.MealType.MAIN, Recipe.MealType.MAIN, Recipe.MealType.BREAKFAST, Recipe.MealType.DESSERT]
+        user_meals = [MealGroup.MAIN, MealGroup.MAIN, MealGroup.BREAKFAST, MealGroup.DESSERT]
         user_allergies = [AllergyGroup.BEES]
 
         allowed_recipes = (
