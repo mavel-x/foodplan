@@ -95,8 +95,8 @@ class RecipeQuerySet(models.QuerySet):
         return self.annotate(
             calories=Sum(F('amounts__grams') * F('amounts__ingredient__calories') / Value(100)))
 
-    def exclude_allergies(self, *allergies: AllergyGroup):
-        return self.exclude(ingredients__allergy_group__in=allergies)
+    def exclude_allergies(self, *allergies: Allergy):
+        return self.exclude(ingredients__allergy_type__in=allergies)
 
 
 class Recipe(models.Model):
@@ -182,8 +182,11 @@ class WeekDayMenu(models.Model):
 
 
 class WeeklyMenu(models.Model):
-    subscription = models.IntegerField(
-        verbose_name='подписка'
+    subscription = models.ForeignKey(
+        'members.Subscription',
+        on_delete=models.CASCADE,
+        verbose_name='подписка',
+        related_name='weekly_menus'
     )
     year = models.SmallIntegerField(
         'год'
@@ -198,15 +201,13 @@ class WeeklyMenu(models.Model):
     )
 
     def __str__(self):
-        return f'{self.subscription} {self.year} {self.week}'
+        return f'{self.subscription}: {self.year}, week {self.week}'
 
     @classmethod
     @transaction.atomic
-    def build_random(cls, subscription_id, year, week):
-        user_subscription = 1
-        user_meals = [MealGroup.MAIN, MealGroup.MAIN, MealGroup.BREAKFAST, MealGroup.DESSERT]
-        user_allergies = [AllergyGroup.BEES]
-
+    def build_random(cls, user_subscription, year, week):
+        user_meals = user_subscription.meals.order_by('category')
+        user_allergies = user_subscription.allergies.all()
         allowed_recipes = (
             Recipe.objects
             .exclude_allergies(*user_allergies)
@@ -218,11 +219,11 @@ class WeeklyMenu(models.Model):
         )
         for day in Weekday:
             recipes = []
-            for meal in sorted(user_meals):
+            for meal in user_meals:
                 recipes.append(
                     allowed_recipes
-                    .filter(type=meal)
-                    .exclude(id__in=[recipe.id for recipe in recipes])
+                    .filter(category__category=meal.category)
+                    .exclude(id__in=[recipe.id for recipe in recipes if recipe is not None])
                     .order_by('?')
                     .first()
                 )
@@ -237,12 +238,12 @@ class WeeklyMenu(models.Model):
         return weekly_menu
 
     @classmethod
-    def get_or_build_for_current_week(cls, subscription_id):
+    def get_or_build_for_current_week(cls, user_subscription):
         today = date.today().isocalendar()
         try:
             return cls.objects.get(
-                subscription=subscription_id,
+                subscription=user_subscription,
                 year=today.year,
                 week=today.week)
         except cls.DoesNotExist:
-            return cls.build_random(subscription_id, today.year, today.week)
+            return cls.build_random(user_subscription, today.year, today.week)
