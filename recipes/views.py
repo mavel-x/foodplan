@@ -1,4 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from datetime import date
+
+from django.shortcuts import render, get_object_or_404, redirect
 
 from .models import Recipe, AllergyGroup, Weekday, WeeklyMenu
 
@@ -13,7 +15,11 @@ def recipe_card(request, recipe_id):
     return render(request, 'card.html', context)
 
 
-def daily_menu(request, day):
+def daily_menu(request, day=None):
+    if day is None:
+        day = date.today().isoweekday()
+        return redirect('daily-menu', day=day)
+
     # TODO
     # subscription = get_object_or_404(Subscription, pk=subscription_id)
     subscription_id = 666
