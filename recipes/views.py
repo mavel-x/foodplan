@@ -19,6 +19,8 @@ def daily_menu(request, day=None):
     if day is None:
         day = date.today().isoweekday()
         return redirect('daily-menu', day=day)
+    elif day < 1 or day > 7:
+        return redirect('daily-menu')
 
     # TODO
     # subscription = get_object_or_404(Subscription, pk=subscription_id)
