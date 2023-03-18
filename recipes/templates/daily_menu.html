@@ -14,7 +14,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
+        <nav class="navbar navbar-expand-md navbar-light  navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="#">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
@@ -38,14 +38,14 @@
             </div>
         </nav>
     </header>
-    <main style="margin-top: calc(2rem + 75px);">
+    <main style="margin-top: calc(1rem + 25px);">
       {% for recipe in recipes %}
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
-                          <img height="250" src="
+                          <img class="my-2" height="250" src="
                             {% if recipe.image %}
                               {{ recipe.image.url }}
                             {% else %}
