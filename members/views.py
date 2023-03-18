@@ -59,5 +59,20 @@ def profile(request):
                 update_session_auth_hash(request, user)
             messages.info(request, 'Data has been changed')
             return redirect('profile')
-    context = {'form': form}
+
+    if hasattr(request.user, 'subscription'):
+        subscription = request.user.subscription
+        allergies = ', '.join([str(allergy) for allergy in subscription.allergies.all()])
+        num_meals = subscription.meals.count()
+    else:
+        subscription = None
+        allergies = None
+        num_meals = None
+
+    context = {
+        'form': form,
+        'subscription': subscription,
+        'allergies': allergies,
+        'num_meals': num_meals,
+    }
     return render(request, 'profile.html', context)
