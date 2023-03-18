@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from recipes.models import Recipe
+from recipes.models import Recipe, MealGroup
 
 
 def index(request):
@@ -14,10 +14,10 @@ def index(request):
     ]
     recipes = []
     all_recipes = Recipe.objects.all()
-    meal_order = [Recipe.MealType.MAIN, Recipe.MealType.DESSERT, Recipe.MealType.BREAKFAST]
+    meal_order = [MealGroup.MAIN, MealGroup.DESSERT, MealGroup.BREAKFAST]
     for meal in meal_order:
         recipes.extend(
-            all_recipes.filter(type=meal)[:2]
+            all_recipes.filter(category__pk=meal)[:2]
         )
     context = {'recipes_labels': zip(recipes, labels)}
     return render(request, 'index.html', context)

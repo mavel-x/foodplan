@@ -36,9 +36,13 @@ class MealType(models.Model):
         'категория',
         choices=MealGroup.choices
     )
+    label = models.CharField(
+        'название',
+        max_length=20,
+    )
 
     def __str__(self):
-        return self.get_category_display()
+        return f'{self.category}: {self.label}'
 
 
 class Ingredient(models.Model):
@@ -199,7 +203,7 @@ class WeeklyMenu(models.Model):
     @classmethod
     @transaction.atomic
     def build_random(cls, subscription_id, year, week):
-        user_subscription = 666
+        user_subscription = 1
         user_meals = [MealGroup.MAIN, MealGroup.MAIN, MealGroup.BREAKFAST, MealGroup.DESSERT]
         user_allergies = [AllergyGroup.BEES]
 
