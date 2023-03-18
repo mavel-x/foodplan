@@ -24,6 +24,6 @@ def daily_menu(request, day):
     context = {
         'recipes': recipes,
         'weekdays': Weekday,
-        'cuurent_page': day,
+        'current_page': day,
     }
     return render(request, 'daily_menu.html', context)
