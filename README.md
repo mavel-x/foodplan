@@ -5,7 +5,7 @@ A meal planning web app
 ### Development
 #### Dump recipe test data
 ```commandline
-venv/bin/python manage.py dumpdata recipes --indent 4 --natural-primary --natural-foreign > data/testdata.json
+venv/bin/python manage.py dumpdata recipes.Allergy recipes.MealType recipes.Ingredient recipes.Recipe recipes.Amount --indent 4 --natural-primary --natural-foreign > data/testdata.json
 ```
 #### Load recipe test data
 ```commandline
