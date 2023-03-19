@@ -20,21 +20,25 @@
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
 
-            <div class="container">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination justify-content-center my-2">
-                    {% for page in weekdays %}
-                        <li class="{% if page.value == current_page %} foodplan__tab-item {% endif %}">
-                          <a class="btn foodplan_green " href="{{ page }}">
-                            {{ page.label }}
-                          </a>
-                        </li>
-                    {% endfor %}
-                  </ul>
-                </nav>
-            </div>
-
-                <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
+                <div class="col-8">
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination justify-content-center my-2">
+                        {% for page in weekdays %}
+                            <li class="{% if page.value == current_page %} foodplan__tab-item {% endif %}">
+                              <a class="btn foodplan_green " href="{{ page }}">
+                                {{ page.label }}
+                              </a>
+                            </li>
+                        {% endfor %}
+                      </ul>
+                    </nav>
+                </div>
+                <div class="container">
+                  <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green"
+                          onclick="location.href='{% url 'home' %}'">
+                    На главную
+                  </button>
+                </div>
             </div>
         </nav>
     </header>
