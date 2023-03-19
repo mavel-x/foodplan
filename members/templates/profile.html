@@ -40,7 +40,7 @@
                         </div>
                         <h3 class="card-title text-center">{{request.user.username}}</h3>
                         <div class="d-block">
-                            <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
+                            <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'logout' %}'">Выйти</button>
                         </div>
                     </div>
 
@@ -117,12 +117,8 @@
                                                 </div>
 
                                                 <div class="col-md-12 col-lg-9">
-                                                    <h6>Описание подписки Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius saepe ea nobis necessitatibus
-                                                        consectetur rem! Eligendi assumenda facere sint quibusdam dolorem quasi doloribus nemo, temporibus molestiae
-                                                        distinctio cum laboriosam sed. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius saepe ea nobis
-                                                        necessitatibus consectetur rem! Eligendi
-                                                        assumenda facere sint quibusdam dolorem quasi doloribus nemo, temporibus molestiae distinctio cum laboriosam
-                                                        sed.</h6>
+                                                    <h6>{{ subscription.menu_category.description }}</h6>
+                                   
                                                 </div>
                                                 <div class="col-md-12 col-lg-3 text-muted d-flex flex-column justify-content-between">
                                                     <div class="d-flex flex-row justify-content-between">
@@ -145,6 +141,7 @@
                                     {% else %}
                                       <div class="row">
                                         <h2>Подписка не оформлена</h2>
+                                        <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'subscription' %}'">Подписка</button>
                                       </div>
                                     {% endif %}
                                 </div>
