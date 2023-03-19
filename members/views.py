@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+from members.models import CustomUser, Subscription
+
 
 def login_user(request):
     next_url = request.GET.get("next", '/')
@@ -59,9 +61,8 @@ def profile(request):
                 update_session_auth_hash(request, user)
             messages.info(request, 'Data has been changed')
             return redirect('profile')
-
-    if hasattr(request.user, 'subscription'):
-        subscription = request.user.subscription
+    subscription = Subscription.objects.filter(user=request.user).first()
+    if subscription:
         allergies = ', '.join([str(allergy) for allergy in subscription.allergies.all()])
         num_meals = subscription.meals.count()
     else:
@@ -76,3 +77,8 @@ def profile(request):
         'num_meals': num_meals,
     }
     return render(request, 'profile.html', context)
+
+
+def subscription(request):
+    context = {}
+    return render(request, 'order.html', context)
