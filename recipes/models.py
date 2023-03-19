@@ -45,6 +45,16 @@ class MealType(models.Model):
         return f'{self.category}: {self.label}'
 
 
+class MenuCategory(models.Model):
+    title = models.CharField(
+        verbose_name="Категория меню",
+        max_length=200,
+    )
+
+    def __str__(self):
+        return f'{self.title}'
+
+
 class Ingredient(models.Model):
     name = models.CharField(
         'название',
@@ -115,6 +125,12 @@ class Recipe(models.Model):
         'MealType',
         verbose_name='категория',
         on_delete=models.CASCADE,
+        null=True,
+    )
+    menu_category = models.ForeignKey(
+        'MenuCategory',
+        verbose_name='категория меню',
+        on_delete=models.SET_NULL,
         null=True,
     )
     description = models.TextField(

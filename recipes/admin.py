@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Amount, WeeklyMenu, DailyMenu, WeekDayMenu, MealType, Allergy
+from .models import Ingredient, Recipe, Amount, WeeklyMenu, DailyMenu, WeekDayMenu, MealType, Allergy, MenuCategory
 
 
 @admin.register(Ingredient)
@@ -52,4 +52,8 @@ class AllergyAdmin(admin.ModelAdmin):
 
 @admin.register(MealType)
 class MealTypeAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(MenuCategory)
+class MenuCategoryAdmin(admin.ModelAdmin):
     pass
