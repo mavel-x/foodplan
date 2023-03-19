@@ -50,6 +50,10 @@ class MenuCategory(models.Model):
         verbose_name="Категория меню",
         max_length=200,
     )
+    description = models.TextField(
+        verbose_name="Описание",
+        blank=True,
+    )
 
     def __str__(self):
         return f'{self.title}'
