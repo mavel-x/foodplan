@@ -94,8 +94,10 @@
                             <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
                                 <img src="{{ recipe.image.url }}" class="d-block w-100" alt="...">
                                 <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                  <a class="link-light text-decoration-none" href="{% url 'recipe-card' forloop.counter %}">
                                     <h5><b>{{ label }}</b></h5>
                                     <h2><b>{{ recipe.name }}</b></h2>
+                                  </a>
                                 </div>
                             </div>
                           {% endfor %}
