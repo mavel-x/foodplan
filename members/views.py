@@ -80,7 +80,12 @@ def profile(request):
     return render(request, 'profile.html', context)
 
 
+@login_required(login_url='login')
 def subscription(request):
+    if request.method == 'GET':
+        if Subscription.objects.filter(user=request.user, paid=True).first():
+            return redirect('profile')
+
     if request.method == 'POST':
         for i in request.POST.items():
             print(i)
