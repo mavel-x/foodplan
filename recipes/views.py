@@ -9,7 +9,7 @@ from .models import Recipe, Weekday, WeeklyMenu
 
 
 def subscription_check(user):
-    return hasattr(user, 'subscription')
+    return Subscription.objects.filter(user=user, paid=True).exists()
 
 
 def recipe_card(request, recipe_id):
