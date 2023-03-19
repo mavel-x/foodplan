@@ -19,10 +19,13 @@ def recipe_card(request, recipe_id):
         elif not subscription_check(request.user):
             return redirect('profile')
     recipe = get_object_or_404(Recipe, pk=recipe_id)
+    next_exists = Recipe.objects.filter(pk=recipe_id + 1).exists()
     amounts = recipe.amounts.prefetch_related('ingredient')
     context = {
         'recipe': recipe,
         'amounts': amounts,
+        'previous_id': recipe_id - 1,
+        'next_id': recipe_id + 1 if next_exists else None,
     }
     return render(request, 'card.html', context)
 
