@@ -2,6 +2,7 @@ from datetime import date
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.urls import reverse
 
 from members.models import Subscription
 from .models import Recipe, Weekday, WeeklyMenu
@@ -11,9 +12,12 @@ def subscription_check(user):
     return hasattr(user, 'subscription')
 
 
-@login_required(login_url='login')
-@user_passes_test(subscription_check, login_url='profile', redirect_field_name=None)
 def recipe_card(request, recipe_id):
+    if recipe_id > 5:
+        if not request.user.is_authenticated:
+            return redirect(f'{reverse("login")}?next={request.path}')
+        elif not subscription_check(request.user):
+            return redirect('profile')
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     amounts = recipe.amounts.prefetch_related('ingredient')
     context = {
