@@ -46,16 +46,64 @@
 
                     <div class="card col-12 col-md-10 p-3 mb-3 foodplan__shadow">
                             <ul class="nav nav-tabs">
+
                                 <li class="nav-item foodplan__tab-item">
-                                    <button id="tab1" class="btn shadow-none foodplan__tab-button active" data-bs-toggle="tab" data-bs-target="#data">Персональные данные</button>
+                                    <button id="tab2" class="btn shadow-none foodplan__tab-button active" data-bs-toggle="tab" data-bs-target="#menu">Моё меню</button>
                                 </li>
                                 <li class="nav-item foodplan__tab-item">
-                                    <button id="tab2" class="btn shadow-none foodplan__tab-button" data-bs-toggle="tab" data-bs-target="#menu">Моё меню</button>
+                                    <button id="tab1" class="btn shadow-none foodplan__tab-button" data-bs-toggle="tab" data-bs-target="#data">Персональные данные</button>
                                 </li>
                                 <li class="nav-item foodplan__tab-item flex-grow-1"></li>
                             </ul>
                             <div class="tab-content mt-2">
-                                <div class="tab-pane fade show active" id="data">
+                                <div class="tab-pane fade show active" id="menu">
+                                  {% if subscription %}
+                                    <div class="row">
+                                      <div class="col-2">
+                                          <img src={% static "img/circle1.png" %} alt="" class="w-100">
+                                      </div>
+                                      <div class="col-10 col-md-10">
+                                          <div class="row">
+                                              <div class="col-6">
+                                                  <h2>{{ subscription.menu_category }}</h2>
+                                              </div>
+                                              <div class="col-6">
+                                                  <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'daily-menu' %}'">
+                                                    К рецептам на неделю ➜</button>
+                                              </div>
+
+                                              <div class="col-md-12 col-lg-9">
+                                                  <h6>Вы подписаны на {{ subscription.duration }} месяцев.</h6>
+                                                  <h6>{{ subscription.menu_category.description }}</h6>
+
+                                              </div>
+                                              <div class="col-md-12 col-lg-3 text-muted d-flex flex-column justify-content-between">
+                                                  <div class="d-flex flex-row justify-content-between">
+                                                      <small>Персоны: </small><small>{{ subscription.person_count }}</small>
+                                                  </div>
+                                                  <div class="d-flex flex-row justify-content-between">
+                                                      <small>Аллергии: &nbsp;</small>
+
+                                                              <small>{{ allergies }} &nbsp;</small>
+
+                                                  </div>
+                                                  <div class="d-flex flex-row justify-content-between">
+                                                      <small>Кол-во приёмов пищи: </small><small>{{ num_meals }}</small>
+                                                  </div>
+
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  {% else %}
+                                    <div class="row">
+                                      <h2>Подписка не оформлена</h2>
+                                      <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'subscription' %}'">Подписка</button>
+                                    </div>
+                                  {% endif %}
+                                </div>
+
+                                <div class="tab-pane fade " id="data">
                                     <form method="post" action="">
                                         {% csrf_token %}
                                         <div class="mb-3">
@@ -100,52 +148,6 @@
                                     {% endfor %}
                                 </div>
 
-                                  <div class="tab-pane fade" id="menu">
-                                    {% if subscription %}
-                                      <div class="row">
-                                        <div class="col-2">
-                                            <img src={% static "img/circle1.png" %} alt="" class="w-100">
-                                        </div>
-                                        <div class="col-10 col-md-10">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <h2>{{ subscription.menu_category }}</h2>
-                                                </div>
-                                                <div class="col-6">
-                                                    <button class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'daily-menu' %}'">
-                                                      К рецептам на неделю ➜</button>
-                                                </div>
-
-                                                <div class="col-md-12 col-lg-9">
-                                                    <h6>Вы подписаны на {{ subscription.duration }} месяцев.</h6>
-                                                    <h6>{{ subscription.menu_category.description }}</h6>
-                                   
-                                                </div>
-                                                <div class="col-md-12 col-lg-3 text-muted d-flex flex-column justify-content-between">
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Персоны: </small><small>{{ subscription.person_count }}</small>
-                                                    </div>
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Аллергии: &nbsp;</small>
-                                                        
-                                                                <small>{{ allergies }} &nbsp;</small>
-                                                            
-                                                    </div>
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Кол-во приёмов пищи: </small><small>{{ num_meals }}</small>
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% else %}
-                                      <div class="row">
-                                        <h2>Подписка не оформлена</h2>
-                                        <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" onclick="location.href='{% url 'subscription' %}'">Подписка</button>
-                                      </div>
-                                    {% endif %}
-                                </div>
                             </div>
                             
                     </div>

@@ -1,9 +1,10 @@
+from django.db import transaction
 from django.shortcuts import redirect, render
-from members.forms import CreateUserForm, ChangeUserForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+from members.forms import CreateUserForm, ChangeUserForm
 from members.models import Subscription
 from recipes.models import MenuCategory, Allergy, MealType
 
@@ -81,6 +82,7 @@ def profile(request):
 
 
 @login_required(login_url='login')
+@transaction.atomic
 def subscription(request):
     if request.method == 'GET':
         if Subscription.objects.filter(user=request.user, paid=True).first():
@@ -106,11 +108,13 @@ def subscription(request):
         subscription.save()
 
         if int(request.POST.get('breakfast')) == 0:
-            subscription.meals.add(MealType.objects.get(label='Breakfast'))
+            subscription.meals.add(MealType.objects.get(label__iexact='breakfast'))
+        if int(request.POST.get('lunch')) == 0:
+            subscription.meals.add(MealType.objects.get(label__iexact='lunch'))
         if int(request.POST.get('dinner')) == 0:
-            subscription.meals.add(MealType.objects.get(label='Dinner'))
+            subscription.meals.add(MealType.objects.get(label__iexact='dinner'))
         if int(request.POST.get('dessert')) == 0:
-            subscription.meals.add(MealType.objects.get(label='Dessert'))
+            subscription.meals.add(MealType.objects.get(label__iexact='dessert'))
 
         for key, value in request.POST.items():
             if key.startswith('allergy'):
