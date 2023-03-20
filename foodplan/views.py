@@ -6,8 +6,9 @@ from recipes.views import subscription_check
 
 def index(request):
     has_subscription = False
-    if subscription_check(request.user):
-        has_subscription = True
+    if request.user.is_authenticated:
+        if subscription_check(request.user):
+            has_subscription = True
 
     labels = [
         'Модный и полезный ужин',
