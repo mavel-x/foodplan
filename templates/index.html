@@ -49,7 +49,11 @@
                         <div class="d-block mt-3">
                             <button class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green"
                                     onclick="location.href='{% url 'daily-menu' %}'">
-                              Хочу попробовать
+                              {% if has_subscription %}
+                                Моё меню
+                              {% else %}
+                                Хочу попробовать
+                              {% endif %}
                             </button>
                         </div>
                     </div>
