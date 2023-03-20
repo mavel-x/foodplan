@@ -120,6 +120,9 @@ def subscription(request):
             if key.startswith('allergy'):
                 subscription.allergies.add(Allergy.objects.get(id=int(value)))
 
+        subscription.paid = True
+        subscription.save()
+
         return redirect('profile')
 
     context = {'allergies': Allergy.objects.all()}
