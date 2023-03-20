@@ -8,6 +8,12 @@ from members.forms import CreateUserForm, ChangeUserForm
 from members.models import Subscription
 from recipes.models import MenuCategory, Allergy, MealType
 
+import stripe
+
+from django.conf import settings
+from django.http.response import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 def login_user(request):
     next_url = request.GET.get("next", '/')
@@ -120,10 +126,52 @@ def create_subscription(request):
             if key.startswith('allergy'):
                 subscription.allergies.add(Allergy.objects.get(id=int(value)))
 
-        subscription.paid = True
         subscription.save()
 
         return redirect('profile')
 
     context = {'allergies': Allergy.objects.all()}
     return render(request, 'order.html', context)
+
+
+@csrf_exempt
+def stripe_config(request):
+    if request.method == 'GET':
+        stripe_config = {'publicKey': settings.STRIPE_PUBLISHABLE_KEY}
+        return JsonResponse(stripe_config, safe=False)
+
+
+@csrf_exempt
+def create_checkout_session(request):
+    if request.method == 'GET':
+        domain_url = request.build_absolute_uri('/')
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try:
+            product = stripe.Product.create(
+                        name='Food Plan A',
+                        description='Your food plan description',
+                        )
+
+            price = stripe.Price.create(
+                    product=product.id,
+                    unit_amount=20000,
+                    currency='rub',
+                    )
+                    
+            checkout_session = stripe.checkout.Session.create(
+                success_url=domain_url + 'profile/payment/success?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=domain_url + 'profile/payment/cancelled/',
+                payment_method_types=['card'],
+                mode='payment',
+                line_items=[
+                    {
+                        'price': price.id,
+                        'quantity': 1,
+                    }
+
+                ]
+            )
+            return JsonResponse({'sessionId': checkout_session['id']})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+

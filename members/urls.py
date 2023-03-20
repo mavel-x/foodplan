@@ -6,5 +6,7 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('logout/', views.logout_user, name='logout'),
     path('', views.profile, name='profile'),
-    path('subscription/', views.create_subscription, name='subscription')
+    path('subscription/', views.create_subscription, name='subscription'),
+    path('payment/config/', views.stripe_config),
+    path('payment/create-checkout-session/', views.create_checkout_session),
 ]
