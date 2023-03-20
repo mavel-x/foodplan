@@ -14,9 +14,9 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
+        <nav class="navbar navbar-expand-md navbar-light navbar__opacity">
             <div class="container">
-                  <a class="navbar-brand" href="#">
+                  <a class="navbar-brand" href="{% url 'home' %}">
                       <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                   </a>
                 <div class="col-4">
@@ -51,11 +51,13 @@
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
+                          <img class="img-fluid"
                             {% if recipe.image %}
-                              <img src="{{ recipe.image.url }}" alt="">
+                              src="{{ recipe.image.url }}"
                             {% else %}
-                              <img src="{% static 'img/circle1.png' %}" alt="">
+                              src="{% static 'img/circle1.png' %}"
                             {% endif %}
+                           alt="{{ recipe.name }} фото">
                         </div>
                     </div>
                     <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
