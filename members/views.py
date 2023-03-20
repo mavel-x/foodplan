@@ -83,7 +83,7 @@ def profile(request):
 
 @login_required(login_url='login')
 @transaction.atomic
-def subscription(request):
+def create_subscription(request):
     if request.method == 'GET':
         if Subscription.objects.filter(user=request.user, paid=True).first():
             return redirect('profile')
